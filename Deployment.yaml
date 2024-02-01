@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-scheduler
+  labels:
+    app: custom-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-scheduler
+  template:
+    metadata:
+      labels:
+        app: custom-scheduler
+    spec:
+      serviceAccountName: custom-scheduler
+      containers:
+        - name: custom-scheduler-container
+          image: custom-scheduler:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - /usr/local/bin/kube-scheduler
+            - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+            - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+            - --config=/etc/kubernetes/config.yaml
+            - --scheduler-name=custom-scheduler-name
